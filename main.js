@@ -315,6 +315,8 @@ app.on('activate', async () => {
 	mainWindow.webContents.send('started', '')
 	runNodeServ()
 	runSynerexServ()
+	runHarmoVIS()
+
 	//	mainWindow.webContents.executeJavaScript(`document.querySelector('header p').textContent = 'Your favorite animal is ${favoriteAnimal}'`);
 	//	mainWindow.webContents.executeJavaScript(`document.querySelector('header p').textContent = 'abc'+${nodeTerm.html}`);
 })();
