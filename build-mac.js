@@ -10,6 +10,10 @@ builder.build({
                     'x64',
                 ]
             }
-        }
+        },
+        "extraFiles":[
+            "synerex/",
+            "mclient/build"
+		]
     }
 });
