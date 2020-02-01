@@ -145,7 +145,7 @@ const runNodeServ = () => {
 	let nodeName = path.join(exePath, '/synerex/nodeserv.exe')
 
 	if (process.platform === 'darwin') {
-		nodeName = path.join(exePath,'/synerex/nodeserv');
+		nodeName = path.join(exePath,'/../synerex/nodeserv');
 	}
 
 	if (nodeServ === null) {
@@ -180,7 +180,7 @@ const runSynerexServ = () => {
 	let exePath = path.dirname(app.getPath('exe'))
 	let sxName = path.join(exePath, '/synerex/synerex-server.exe')
 	if (process.platform === 'darwin') {
-		sxName = path.join(exePath, '/synerex/synerex-server')
+		sxName = path.join(exePath, '/../synerex/synerex-server')
 //		sxName = path.join(sxdir,'/server/synerex-server');
 	}
 
@@ -213,7 +213,7 @@ const runHarmoVIS = () => {
 	let exePath = path.dirname(app.getPath('exe'))
 	let hvName = path.join(exePath, '/synerex/harmovis-layers.exe')
 	if (process.platform === 'darwin') {
-		hvName = path.join(exePath, '/synerex/harmovis-layers')
+		hvName = path.join(exePath, '/../synerex/harmovis-layers')
 	}
 
 	const mapbox_token = config.get('MAPBOX_ACCESS_TOKEN');
