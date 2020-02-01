@@ -221,8 +221,10 @@ const runHarmoVIS = () => {
 		try {
 			FS.statSync(hvName);
 			if (process.platform === 'darwin') {
-				harmoVIS = spawn(hvName,["-mapbox",mapbox_token, "-assetdir", path.join(exePath, '../')])
+				console.log("Yes darwin!")
+				harmoVIS = spawn(hvName,["-assetdir", path.join(exePath, '../'),"-mapbox",mapbox_token])
 			}else{
+				console.log("no... "+process.platform)
 				harmoVIS = spawn(hvName,["-mapbox",mapbox_token])
 			}
 			mainWindow.webContents.send('harmovis', '')
