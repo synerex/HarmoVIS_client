@@ -220,7 +220,11 @@ const runHarmoVIS = () => {
 	if (harmoVIS === null) {
 		try {
 			FS.statSync(hvName);
-			harmoVIS = spawn(hvName,["-mapbox",mapbox_token])
+			if (process.platform === 'darwin') {
+				harmoVIS = spawn(hvName,["-mapbox",mapbox_token, "-assetdir", path.join(exePath, '../')])
+			}else{
+				harmoVIS = spawn(hvName,["-mapbox",mapbox_token])
+			}
 			mainWindow.webContents.send('harmovis', '')
 			setCallBack(harmoVIS, 'hv', 'hvlog')
 		} catch (err) {
