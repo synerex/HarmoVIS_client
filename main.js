@@ -108,14 +108,18 @@ let harmoVIS = null
 
 const setNodeCallBack = (proc) => {
 	proc.stdout.on('data', (data) => {
-		console.log('stdout:' + data)
+//		console.log('stdout:' + data)
 	})
 	proc.stderr.on('data', (data) => {
-		console.log('stderr:' + data)
-		mainWindow.webContents.send('nodelog', data)
+//		console.log('stderr:' + data)
+		try{
+			mainWindow.webContents.send('nodelog', data)
+		}catch{
+			
+		}
 	})
 	proc.on('close', (code) => {
-		console.log('nodeserv stopped:' + code)
+//		console.log('nodeserv stopped:' + code)
 		nodeServ = null
 	})
 }
