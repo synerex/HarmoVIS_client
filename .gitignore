@@ -97,6 +97,10 @@ dist
 # FuseBox cache
 .fusebox/
 
+
+# synerex binaries
+synerex
+
 # DynamoDB Local files
 .dynamodb/
 
