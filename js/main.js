@@ -34,20 +34,35 @@ ipc.on('started', function(){
     hvTerm.write("start")
 
 
-    document.getElementById('nodeserv').onclick = function() {
+//    document.getElementById('nodeserv').onclick = function() {
         // start NoderServer
-        ipc.send('start-nodeserv','')
-    }
-    
-    document.getElementById('sxserver').onclick = function() {
+//        ipc.send('start-nodeserv','')
+//    }
+
+    document.getElementById('toggle_nodeserv').onclick = function(e) {
         // start NoderServer
-        ipc.send('start-sxserver','')
+        if (e.currentTarget.checked == true){
+            ipc.send('start-nodeserv','')
+        }else{
+            ipc.send('stop-nodeserv','')
+        }
     }
 
-    document.getElementById('harmovis').onclick = function() {
-        // start NoderServer
-        ipc.send('start-harmovis','')
+    document.getElementById('toggle_sxserv').onclick = function(e) {
+        if (e.currentTarget.checked == true){
+            ipc.send('start-sxserv','')
+        }else{
+            ipc.send('stop-sxserv','')
+        }
     }
+    document.getElementById('toggle_harmovis').onclick = function(e) {
+        if (e.currentTarget.checked == true){
+            ipc.send('start-harmovis','')
+        }else{
+            ipc.send('stop-harmovis','')
+        }
+    }
+    
 
     document.getElementById('mapwin').onclick = function() {
         // start NoderServer
@@ -96,15 +111,15 @@ ipc.on('hvlog', function(event, data){
 // resize!
 function resize() { 
     if (nodeTermP != null) {
-        nodeTermP.style.height = Math.round(window.innerHeight*0.25)+"px";
+        nodeTermP.style.height = Math.round(window.innerHeight*0.27)+"px";
 //        console.log("Set", nodeTermP.style)
     }
     if (sxTermP != null) {
-        sxTermP.style.height = Math.round(window.innerHeight*0.25)+"px";
+        sxTermP.style.height = Math.round(window.innerHeight*0.27)+"px";
 //        console.log("SetSx", sxTermP.style)
     }
     if (hvTermP != null) {
-        hvTermP.style.height = Math.round(window.innerHeight*0.25)+"px";
+        hvTermP.style.height = Math.round(window.innerHeight*0.27)+"px";
 //        console.log("SetHv", hvTermP.style)
     }
 }

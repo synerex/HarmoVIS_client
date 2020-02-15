@@ -126,14 +126,16 @@ const setNodeCallBack = (proc) => {
 
 const setCallBack = (proc, st, cmd) => {
 	proc.stdout.on('data', (data) => {
-		console.log(st + ' stdout:' + data)
+//		console.log(st + ' stdout:' + data)
 	})
 	proc.stderr.on('data', (data) => {
-		console.log(st + ' stderr:' + data)
-		mainWindow.webContents.send(cmd, data)
+//		console.log(st + ' stderr:' + data)
+		if ( mainWindow != null) {
+			mainWindow.webContents.send(cmd, data)
+		}
 	})
 	proc.on('close', (code) => {
-		console.log(st + ' stopped:' + code)
+//		console.log(st + ' stopped:' + code)
 	})
 }
 
@@ -243,7 +245,13 @@ const runHarmoVIS = () => {
 		})
 		console.log("Kill Result", r)
 		sleep(2000).then(() => {
-			harmoVIS = spawn(hvName,["-mapbox",mapbox_token])
+			if (process.platform === 'darwin') {
+				console.log("Yes darwin!")
+				harmoVIS = spawn(hvName,["-assetdir", path.join(exePath, '../'),"-mapbox",mapbox_token])
+			}else{
+				console.log("no... "+process.platform)
+				harmoVIS = spawn(hvName,["-mapbox",mapbox_token])
+			}
 			mainWindow.webContents.send('harmovis', '')
 			setCallBack(harmoVIS, 'hv', 'hvlog')
 		})
@@ -256,7 +264,49 @@ ipc.on('start-nodeserv', () => {
 	console.log("Start nodeserv from Browser");
 	runNodeServ()
 });
-ipc.on('start-sxserver', () => {
+
+ipc.on('stop-nodeserv', () => {
+	console.log("Stop nodeserv from Browser");
+	try{
+		mainWindow.webContents.send('nodelog', "Stopping nodeserv")
+	}catch{
+		
+	}
+	var r = kill(nodeServ.pid, 'SIGKILL', function (err) {
+		console.log("Kill err", err)
+	})
+	try{
+		mainWindow.webContents.send('nodelog', '..Stopped')
+	}catch{
+		
+	}
+
+});
+ipc.on('stop-harmovis', () => {
+	try{
+		mainWindow.webContents.send('hvlog', "Stopping HarmoVIS")
+	}catch{}
+	var r = kill(harmoVIS.pid, 'SIGKILL', function (err) {
+		console.log("Kill err", err)
+	})
+	try{
+		mainWindow.webContents.send('hvlog', "..Stopped")
+	}catch{}
+});
+ipc.on('stop-sxserv', () => {
+	try{
+		mainWindow.webContents.send('sxlog', "Stopping SxServer")
+	}catch{}
+	var r = kill(sxServ.pid, 'SIGKILL', function (err) {
+		console.log("Kill err", err)
+	})
+	try{
+		mainWindow.webContents.send('sxlog', "..Stopped")
+	}catch{}
+});
+
+
+ipc.on('start-sxserv', () => {
 	console.log("Start Synerex Server from Browser");
 	runSynerexServ()
 });

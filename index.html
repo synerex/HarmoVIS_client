@@ -1,22 +1,54 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Synerex+Harmoware-VIS</title>
-		<link rel="stylesheet" href="index.css">
-		<script src="js/main.js"></script>
 
-	</head>
-	<body>
-		<div class="container">
+<head>
+	<meta charset="utf-8">
+	<title>Synerex+Harmoware-VIS</title>
+	<link rel="stylesheet" href="index.css">
+	<script src="js/main.js"></script>
+
+</head>
+
+<body>
+	<div class="container">
+		<div class="toggle">
 			<button id="mapwin" class="btn-square-little-rich">MapWin</button>
-			<button id="harmovis" class="btn-square-little-rich">HarmoVIS</button><br />
-			<div class="terminaljs" id="hvterm"></div>
-			<button id="nodeserv" class="btn-square-little-rich">NodeServ</button><br />
-				<div class="terminaljs" id="nodeterm"></div>
-				<button id="sxserver" class="btn-square-little-rich">SxServer</button><br />
-				<div class="terminaljs" id="sxterm"></div>
-			<footer></footer>
+			<label class="toggle_label">
+				<span class="toggle_in">
+				<input type="checkbox" class="toggle_input" id="toggle_harmovis" checked="checked" />
+				<span class="toggle_content"></span>
+				<span class="toggle_circle"></span>
+			</span>
+			HarmoVIS
+			</label>
 		</div>
-	</body>
+		<div class="terminaljs" id="hvterm"></div>
+
+		<div class="toggle">
+			<label class="toggle_label">
+				<span class="toggle_in">
+					<input type="checkbox" class="toggle_input" id="toggle_nodeserv" checked="checked" />
+				<span class="toggle_content"></span>
+				<span class="toggle_circle"></span>
+			</span>
+			NodeServ
+			</label>
+		</div>
+		<div class="terminaljs" id="nodeterm"></div>
+
+		<div class="toggle">
+			<label class="toggle_label">
+				<span class="toggle_in">
+					<input type="checkbox" class="toggle_input" id="toggle_sxserv" checked="checked" />
+				<span class="toggle_content"></span>
+				<span class="toggle_circle"></span>
+			</span>
+			SxServer
+			</label>
+		</div>
+		<div class="terminaljs" id="sxterm"></div>
+		<footer></footer>
+	</div>
+</body>
+
 </html>
