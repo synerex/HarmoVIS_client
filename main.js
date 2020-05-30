@@ -373,10 +373,15 @@ app.on('activate', async () => {
 
 	//	var nodeTerm = new Terminal();
 	mainWindow.webContents.send('started', '')
-	runNodeServ()
-	runSynerexServ()
-	runHarmoVIS()
 
-	//	mainWindow.webContents.executeJavaScript(`document.querySelector('header p').textContent = 'Your favorite animal is ${favoriteAnimal}'`);
-	//	mainWindow.webContents.executeJavaScript(`document.querySelector('header p').textContent = 'abc'+${nodeTerm.html}`);
+
+	runNodeServ()
+	// we need small wait for running up NodeServ
+	sleep(1000).then(() => {
+		runSynerexServ()
+		sleep(1000).then(() => {
+			runHarmoVIS()
+		})
+	})
+
 })();
