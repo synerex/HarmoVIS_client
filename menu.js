@@ -27,19 +27,20 @@ const helpSubmenu = [
 		url: 'https://synerex.net/'
 	}),
 	openUrlMenuItem({
-		label: 'Source Code',
-		url: 'https://github.com/synerex/synerex_client_electron'
+		label: 'GitHub Code',
+		url: 'https://github.com/synerex/HarmoVIS_client'
 	}),
 	{
-		label: 'Show Settings',
+		label: 'Open Config.json',
 		click() {
-			config.openInEditor();
+			shell.openPath(	config.path) 
+			// config.openInEditor()  // error in electron 9.0
 		}
 	},
 	{
-		label: 'Show App Data',
+		label: 'Show Config Dir',
 		click() {
-			shell.openItem(app.getPath('userData'));
+			shell.openPath(app.getPath('userData'));
 		}
 	},
 
@@ -56,7 +57,7 @@ ${debugInfo()}`;
 
 			openNewGitHubIssue({
 				user: 'synerex',
-				repo: 'synerex_client_electron',
+				repo: 'HarmoVIS_client',
 				body
 			});
 		}

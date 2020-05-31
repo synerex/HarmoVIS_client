@@ -12,6 +12,7 @@ const FS = require("fs-extra");
 
 const config = require('./config');
 const menu = require('./menu');
+const packageJson  = require('./package.json');
 
 const { spawn } = require('child_process')
 const ipc = require('electron').ipcMain;
@@ -62,8 +63,9 @@ const createMainWindow = async () => {
 		file: 'config.json'
 	});
 
+
 	let options = {
-		title: "HarmoVIS_client",
+		title: "Synerex+HarmoVIS("+packageJson.version+")",
 		x: mainWindowState.x,
 		y: mainWindowState.y,
 		width: mainWindowState.width,
