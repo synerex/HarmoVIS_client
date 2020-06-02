@@ -107,6 +107,7 @@ const createMainWindow = async () => {
 let nodeServ = null
 let sxServ = null
 let harmoVIS = null
+let prServ = null // for ProxyServer
 
 const setNodeCallBack = (proc) => {
 	proc.stdout.on('data', (data) => {
@@ -140,6 +141,19 @@ const setCallBack = (proc, st, cmd) => {
 //		console.log(st + ' stopped:' + code)
 	})
 }
+
+const setStdOutCallBack = (proc, st) => {
+	proc.stdout.on('data', (data) => {
+		console.log(st + ' stdout:' + data)
+	})
+	proc.stderr.on('data', (data) => {
+		console.log(st + ' stderr:' + data)
+	})
+	proc.on('close', (code) => {
+		console.log(st + ' stopped:' + code)
+	})
+}
+
 
 const runNodeServ = () => {
 	//	const args = []
@@ -262,6 +276,41 @@ const runHarmoVIS = () => {
 
 
 
+
+const runProxy = () => {
+	let exePath = path.dirname(app.getPath('exe'))
+	let prName = path.join(exePath, '/synerex/proxy.exe')
+	if (process.platform === 'darwin') {
+		prName = path.join(exePath, '/../synerex/proxy')
+	}
+	
+	if (prServ === null) {
+		try {
+			FS.statSync(prName);
+			prServ = spawn(prName)
+			mainWindow.webContents.send('prserv', '')
+//				setCallBack(prServ, 'pr', 'sxlog')
+			setCallBack(prServ, 'px', 'misclog')
+//			setStdOutCallBack(prServ,'pr')
+		} catch (err) {
+//				mainWindow.webContents.send('sxserv', '')
+//				mainWindow.webContents.send('sxlog', 'Cant open ' + sxName)
+		}
+	} else {
+		var r = kill(prServ.pid, 'SIGKILL', function (err) {
+			console.log("Kill err", err)
+		})
+		console.log("Kill Result", r)
+		sleep(2000).then(() => {
+			prServ = spawn(prName)
+			setCallBack(prServ, 'px', 'misclog')
+//			mainWindow.webContents.send('sxserv', '')
+//			setStdOutCallBack(prServ,'pr')
+//setCallBack(sxServ, 'sx', 'sxlog')
+		})
+	}
+}
+
 ipc.on('start-nodeserv', () => {
 	console.log("Start nodeserv from Browser");
 	runNodeServ()
@@ -284,6 +333,7 @@ ipc.on('stop-nodeserv', () => {
 	}
 
 });
+
 ipc.on('stop-harmovis', () => {
 	try{
 		mainWindow.webContents.send('hvlog', "Stopping HarmoVIS")
@@ -306,7 +356,12 @@ ipc.on('stop-sxserv', () => {
 		mainWindow.webContents.send('sxlog', "..Stopped")
 	}catch{}
 });
-
+ipc.on('stop-prserv', () => {
+	var r = kill(prServ.pid, 'SIGKILL', function (err) {
+		console.log("Kill err", err)
+	})
+	prServ = null
+});
 
 ipc.on('start-sxserv', () => {
 	console.log("Start Synerex Server from Browser");
@@ -315,6 +370,11 @@ ipc.on('start-sxserv', () => {
 ipc.on('start-harmovis', () => {
 	console.log("Start Harmovis from Browser");
 	runHarmoVIS()
+});
+
+ipc.on('start-prserv', () => {
+	console.log("Start ProxyServer");
+	runProxy()
 });
 
 ipc.on('start-browser', () => {
@@ -337,6 +397,54 @@ ipc.on('start-browser', () => {
 	harmovisWindow.loadURL('http://127.0.0.1:10080/')
 
 });
+
+
+
+
+ipc.on('do-higashiyama', () => {
+	console.log("Start Hiigashiyama");
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let geoName = path.join(exePath, '/synerex/geo-provider.exe')
+	if (process.platform === 'darwin') {
+		geoName = path.join(exePath, '/../synerex/geo-provider')
+	}
+	
+
+	const c1 = spawn(geoName, ['-geojson', 'higashiyama_facility.geojson', '-webmercator'],{cwd:dirPath})	
+	setCallBack(c1, 'geoh1', 'misclog')
+	sleep(1000).then(() => {
+		const c2 = spawn(geoName, ['-lines', 'higashiyama_line.geojson', '-webmercator'],{cwd:dirPath})
+		setCallBack(c2, 'geoh2', 'misclog')
+		sleep(500).then(()=>{
+			const c3 = spawn(geoName, ['-viewState', '35.15596582695651,136.9783370942177,16'],{cwd:dirPath})
+			setCallBack(c3, 'geoh3', 'misclog')
+		})
+	})
+
+});
+
+ipc.on('do-centrair', () => {
+	console.log("Start Hiigashiyama");
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let geoName = path.join(exePath, '/synerex/geo-provider.exe')
+	if (process.platform === 'darwin') {
+		geoName = path.join(exePath, '/../synerex/geo-provider')
+	}
+	const c2 = spawn(geoName, ['-lines', 'accessPlaza.geojson', '-webmercator'],{cwd:dirPath})
+	setCallBack(c2, 'geoc2', 'misclog')
+	sleep(500).then(() => {
+		const c1 = spawn(geoName, ['-geojson', '2-wall.geojson', '-webmercator'],{cwd:dirPath})	
+		setCallBack(c1, 'geoc1', 'misclog')
+		sleep(1000).then(()=>{
+			const c3 = spawn(geoName, ['-viewState', '34.8592285,136.8163486,17'],{cwd:dirPath})
+			setCallBack(c3, 'geoc3', 'misclog')
+		})
+	})
+
+});
+
 
 
 
