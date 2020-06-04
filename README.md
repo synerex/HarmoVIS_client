@@ -1,6 +1,14 @@
 # HarmoVIS_client
 Harmoware-VIS client for Synerex using Electron
 
+# Installation
+
+
+
+# インストール：
+日本語ドキュメントは以下にあります。（ちょっと古い）
+https://s-mobi01.github.io/SynerexHarmVizCli
+
 
 #How to build
   yarn
@@ -15,3 +23,5 @@ You have to copy your own synerex-server, harmovis-layers, nodeserv into synerex
   yarn dist-mac
 
   yarn dist-win
+
+
