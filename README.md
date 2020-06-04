@@ -5,8 +5,9 @@ Harmoware-VIS client for Synerex using Electron
 
 
 
-# インストール：
+## インストール：
 日本語ドキュメントは以下にあります。（ちょっと古い）
+
 https://s-mobi01.github.io/SynerexHarmVizCli
 
 
