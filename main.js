@@ -108,6 +108,8 @@ let nodeServ = null
 let sxServ = null
 let harmoVIS = null
 let prServ = null // for ProxyServer
+let storeProc = null // channel_store
+let playProc = null // channel_retrieve
 
 const setNodeCallBack = (proc) => {
 	proc.stdout.on('data', (data) => {
@@ -311,6 +313,37 @@ const runProxy = () => {
 	}
 }
 
+
+const runStoreMessage = () => {
+	let exePath = path.dirname(app.getPath('exe'))
+	let stName = path.join(exePath, '/synerex/channel_store.exe')
+	if (process.platform === 'darwin') {
+		stName = path.join(exePath, '/../synerex/channel_store')
+	}
+	
+	if (storeProc === null) {
+		try {
+			FS.statSync(stName);
+			storeProc = spawn(stName, ['-channel', '14', '-saveFile','saveMessage.csv'],{cwd:dirPath})	
+
+			mainWindow.webContents.send('save', '')
+			setCallBack(storeProc, 'sm', 'misclog')
+		} catch (err) {
+		}
+	} else {
+		var r = kill(storeProc.pid, 'SIGKILL', function (err) {
+			console.log("Kill err", err)
+		})
+		console.log("Kill Result", r)
+		sleep(2000).then(() => {
+			storeProc = spawn(stName, ['-channel', '14', '-saveFile','saveMessage.csv'],{cwd:dirPath})	
+			setCallBack(storeProc, 'sm', 'misclog')
+		})
+	}
+}
+
+
+
 ipc.on('start-nodeserv', () => {
 	console.log("Start nodeserv from Browser");
 	runNodeServ()
@@ -399,6 +432,18 @@ ipc.on('start-browser', () => {
 });
 
 
+ipc.on('start-save', () => {
+	console.log("Start GeoChannelSave");
+	runStoreMessage()
+});
+
+ipc.on('stop-save', () => {
+	var r = kill(storeProc.pid, 'SIGKILL', function (err) {
+		console.log("StoreProc ill err", err)
+	})
+	storeProc = null
+});
+
 
 
 ipc.on('do-higashiyama', () => {
@@ -424,6 +469,7 @@ ipc.on('do-higashiyama', () => {
 
 });
 
+
 ipc.on('do-centrair', () => {
 	console.log("Start Hiigashiyama");
 	let exePath = path.dirname(app.getPath('exe'))
@@ -444,6 +490,46 @@ ipc.on('do-centrair', () => {
 	})
 
 });
+
+
+ipc.on('do-simulation', () => {
+	console.log("Start Hiigashiyama Simulation");
+	if (playProc != null) {
+		var r = kill(playProc.pid, 'SIGKILL', function (err) {
+			console.log("PlayProc kill err", err)
+		})
+		playProc = null
+	}
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let rtName = path.join(exePath, '/synerex/channel_retrieve.exe')
+	if (process.platform === 'darwin') {
+		rtName = path.join(exePath, '/../synerex/channel_retrieve')
+	}
+	playProc = spawn(rtName, ['-sendfile', 'higashi-sim.csv', '-channel','13','-speed','1.2'],{cwd:dirPath})
+	setCallBack(playProc, 'pm', 'misclog')
+	
+});
+
+ipc.on('do-playMessage', () => {
+	console.log("Start Play Messages");
+	if (playProc != null) {
+		var r = kill(playProc.pid, 'SIGKILL', function (err) {
+			console.log("PlayProc kill err", err)
+		})
+		playProc = null
+	}
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let rtName = path.join(exePath, '/synerex/channel_retrieve.exe')
+	if (process.platform === 'darwin') {
+		rtName = path.join(exePath, '/../synerex/channel_retrieve')
+	}
+	playProc = spawn(rtName, ['-sendfile', 'saveMessage.csv', '-channel','14','-speed','1.2'],{cwd:dirPath})
+	setCallBack(playProc, 'pm', 'misclog')
+	
+});
+
 
 
 

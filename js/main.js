@@ -73,7 +73,14 @@ ipc.on('started', function(){
             ipc.send('stop-prserv','')
         }
     }
-    
+
+    document.getElementById('toggle_save_message').onclick = function(e) {
+        if (e.currentTarget.checked == true){
+            ipc.send('start-save','')
+        }else{
+            ipc.send('stop-save','')
+        }
+    }    
 
     document.getElementById('mapwin').onclick = function() {
         // start NoderServer
@@ -89,6 +96,17 @@ ipc.on('started', function(){
         // start NoderServer
         ipc.send('do-centrair','')
     }
+
+    document.getElementById('runSim').onclick = function() {
+        // start NoderServer
+        ipc.send('do-simulation','')
+    }
+
+    document.getElementById('playMessage').onclick = function() {
+        // start NoderServer
+        ipc.send('do-playMessage','')
+    }
+
 
 
 
