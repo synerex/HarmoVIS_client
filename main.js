@@ -362,6 +362,7 @@ ipc.on('start-nodeserv', () => {
 });
 
 ipc.on('stop-nodeserv', () => {
+	if (nodeServ === null) return;
 	console.log("Stop nodeserv from Browser");
 	try{
 		mainWindow.webContents.send('nodelog', "Stopping nodeserv")
@@ -380,6 +381,7 @@ ipc.on('stop-nodeserv', () => {
 });
 
 ipc.on('stop-harmovis', () => {
+	if (harmoVIS === null) return;
 	try{
 		mainWindow.webContents.send('hvlog', "Stopping HarmoVIS")
 	}catch{}
@@ -391,6 +393,7 @@ ipc.on('stop-harmovis', () => {
 	}catch{}
 });
 ipc.on('stop-sxserv', () => {
+	if (sxServ === null) return;
 	try{
 		mainWindow.webContents.send('sxlog', "Stopping SxServer")
 	}catch{}
@@ -402,6 +405,8 @@ ipc.on('stop-sxserv', () => {
 	}catch{}
 });
 ipc.on('stop-prserv', () => {
+	if (prServ === null) return;
+
 	var r = kill(prServ.pid, 'SIGKILL', function (err) {
 		console.log("Kill err", err)
 	})
@@ -582,7 +587,7 @@ app.on('activate', async () => {
 	}
 });
 
-function doServers(){
+const doServers = () => {
 	runNodeServ()
 	// we need small wait for running up NodeServ
 	sleep(1000).then(() => {
@@ -594,7 +599,8 @@ function doServers(){
 				})
 		})
 	})
-}
+};
+
 
 
 (async () => {
@@ -615,7 +621,7 @@ function doServers(){
 	if (token.length < 80 ){ // token is not set!
 		mainWindow.webContents.send("mapbox-dialog","")
 	}else{//
-		doServers()
+		doServers();
 	}
 
 })();
