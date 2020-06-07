@@ -544,8 +544,12 @@ ipc.on('do-playMessage', () => {
 
 
 ipc.on("mapbox-token", (event, d) => {
-	console.log("Now mapbox:",d)
+	console.log("Now Get mapbox:",d)
 	config.set('MAPBOX_ACCESS_TOKEN',d);
+	// if first assign, start servers
+	if (d > 80 && nodeServ == null){
+		doServers()
+	}
 });
 
 
@@ -578,6 +582,20 @@ app.on('activate', async () => {
 	}
 });
 
+function doServers(){
+	runNodeServ()
+	// we need small wait for running up NodeServ
+	sleep(1000).then(() => {
+			runSynerexServ()
+			sleep(1000).then(() => {
+				runHarmoVIS()
+				sleep(500).then(() => {
+					runProxy()
+				})
+		})
+	})
+}
+
 
 (async () => {
 	await app.whenReady();
@@ -594,18 +612,8 @@ app.on('activate', async () => {
 	mainWindow.webContents.send("set-mapbox-token", token)
 	if (token.length < 80 ){ // token is not set!
 		mainWindow.webContents.send("mapbox-dialog","")
+	}else{//
+		doServers()
 	}
-
-	runNodeServ()
-	// we need small wait for running up NodeServ
-	sleep(1000).then(() => {
-		runSynerexServ()
-		sleep(1000).then(() => {
-			runHarmoVIS()
-			sleep(500).then(() => {
-				runProxy()
-			})
-		})
-	})
 
 })();
