@@ -90,7 +90,7 @@ ipc.on('started', function(){
             ipc.send('stop-prserv','')
         }
     }
-
+/*
     document.getElementById('toggle_save_message').onclick = function(e) {
         if (e.currentTarget.checked == true){
             ipc.send('start-save','')
@@ -98,7 +98,13 @@ ipc.on('started', function(){
             ipc.send('stop-save','')
         }
     }    
+    document.getElementById('playMessage').onclick = function() {
+        // start NoderServer
+        ipc.send('do-playMessage','')
+    }
 
+
+    */
     document.getElementById('mapwin').onclick = function() {
         // start NoderServer
         ipc.send('start-browser','')
@@ -118,13 +124,6 @@ ipc.on('started', function(){
         // start NoderServer
         ipc.send('do-simulation','')
     }
-
-    document.getElementById('playMessage').onclick = function() {
-        // start NoderServer
-        ipc.send('do-playMessage','')
-    }
-
-
 
 
 })
