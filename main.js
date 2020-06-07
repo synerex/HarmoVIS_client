@@ -5,13 +5,17 @@ const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 /// const {autoUpdater} = require('electron-updater');
 const { is } = require('electron-util');
 const unhandled = require('electron-unhandled');
+// electron preferences: https://github.com/tkambler/electron-preferences
+//const ElectronPreferences = require('electron-preferences');
+//const preferences = require('./preferences');
+
 const debug = require('electron-debug');
 const contextMenu = require('electron-context-menu');
 const WindowStateKeeper = require('electron-window-state');
 const FS = require("fs-extra");
 
 const config = require('./config');
-const menu = require('./menu');
+const menuConfig = require('./menu');
 const packageJson  = require('./package.json');
 
 const { spawn } = require('child_process')
@@ -24,6 +28,14 @@ const kill = require('tree-kill')
 unhandled();
 debug();
 contextMenu();
+
+/*
+preferences.on('save', (preferences) => {
+	console.log(`Preferences were saved.`, JSON.stringify(preferences, null, 4))
+	
+	preferences.value('mapbox_token');
+});
+*/
 
 // Note: Must match `build.appId` in package.json
 app.setAppUserModelId('net.synerex.HarmoVIS_client');
@@ -531,6 +543,11 @@ ipc.on('do-playMessage', () => {
 });
 
 
+ipc.on("mapbox-token", (event, d) => {
+	console.log("Now mapbox:",d)
+	config.set('MAPBOX_ACCESS_TOKEN',d);
+});
+
 
 
 
@@ -561,15 +578,23 @@ app.on('activate', async () => {
 	}
 });
 
+
 (async () => {
 	await app.whenReady();
-	Menu.setApplicationMenu(menu);
+	Menu.setApplicationMenu(menuConfig.menu);
+//	menuConfig.set_pref_object(
+//		preferences
+//	)
 	mainWindow = await createMainWindow();
-//	mainWindow.setMenu(null);
+	menuConfig.set_mainwindow(mainWindow);
 
-	//	var nodeTerm = new Terminal();
 	mainWindow.webContents.send('started', '')
 
+	const token = config.get("MAPBOX_ACCESS_TOKEN")
+	mainWindow.webContents.send("set-mapbox-token", token)
+	if (token.length < 80 ){ // token is not set!
+		mainWindow.webContents.send("mapbox-dialog","")
+	}
 
 	runNodeServ()
 	// we need small wait for running up NodeServ
@@ -577,6 +602,9 @@ app.on('activate', async () => {
 		runSynerexServ()
 		sleep(1000).then(() => {
 			runHarmoVIS()
+			sleep(500).then(() => {
+				runProxy()
+			})
 		})
 	})
 

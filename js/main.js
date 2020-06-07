@@ -1,5 +1,6 @@
 const ipc = require('electron').ipcRenderer;
 
+
 const Terminal = require('terminal.js');
 
 
@@ -10,8 +11,24 @@ let  sxTermP = null;
 let miscTerm = null;
 let miscTermP = null;
 
+let mapbox_token_config = "enter mapbox token"
+
+var dlg
+
 ipc.on('started', function(){
     console.log("Started!")
+    dlg = document.querySelector('#input-mapbox-token');
+//    console.log("dlg",dlg)
+
+/*
+    dlg.addEventListener('cancel', (event) => {
+        'use strict';
+        console.log("Canceled");
+        event.preventDefault();
+    });
+*/  
+
+
     nodeTermP = document.getElementById('nodeterm')
 //    console.log('node:',nodeTermP)
     nodeTerm = new Terminal({columns:100,rows:200})
@@ -154,6 +171,20 @@ ipc.on('misclog', function(event, data){
     } )
 })
 
+ipc.on("mapbox-dialog", function(event, data){
+
+    console.log("do-mapboxset token",data)
+    if (data.length == 0){
+        data = mapbox_token_config
+    }
+    showMapboxDialogElement(data)
+})
+
+ipc.on("set-mapbox-token", function(event, data){
+    console.log("set token:[",data,"]")
+    mapbox_token_config = data
+})
+
 
 
 // resize!
@@ -178,5 +209,23 @@ function resize() {
 //        console.log("SetHv", hvTermP.style)
     }
 }
+
+function showMapboxDialogElement(data) {
+    'use strict';
+
+    document.querySelector('#input').value = data
+    dlg.showModal();
+
+    function onClose(event) {
+            dlg.removeEventListener('close', onClose);
+            if (dlg.returnValue === 'ok') { //returnValueにvalue属性の値が入る
+                const inputValue = document.querySelector('#input').value;//入力値を取得
+                mapbox_token_config = inputValue;
+                ipc.send('mapbox-token',inputValue)
+            } 
+    }
+    dlg.addEventListener('close', onClose, {once: true});
+}
+
 
 window.onresize = resize;

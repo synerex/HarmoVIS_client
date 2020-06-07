@@ -14,11 +14,18 @@ const {
 
 const config = require('./config');
 
+let mainWindow;
+
+exports.set_mainwindow = (obj)=>{
+//	console.log("set mainWindow:",obj);
+	mainWindow = obj;
+}
 
 const showPreferences = () => {
 	// Show the app's preferences here
+//	console.log("Preferences Obj:",pref_object);
+	mainWindow.webContents.send('mapbox-dialog',"")
 };
-
 
 
 const helpSubmenu = [
@@ -30,6 +37,14 @@ const helpSubmenu = [
 		label: 'GitHub Code',
 		url: 'https://github.com/synerex/HarmoVIS_client'
 	}),
+	{
+		label: 'Input Mapbox Token',
+		click() {
+			// config.openInEditor()  // error in electron 9.0
+//			console.log("send mapbox-dialog");
+			mainWindow.webContents.send('mapbox-dialog',"");
+		}
+	},
 	{
 		label: 'Open Config.json',
 		click() {
@@ -204,4 +219,4 @@ if (is.development) {
 	});
 }
 
-module.exports = Menu.buildFromTemplate(template);
+exports.menu = Menu.buildFromTemplate(template);

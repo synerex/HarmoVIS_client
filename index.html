@@ -12,6 +12,7 @@
 	<div class="container">
 		<div class="toggle">
 			<button id="mapwin" class="btn-square-little-rich">MapWin</button>
+
 			<label class="toggle_label">
 				<span class="toggle_in">
 				<input type="checkbox" class="toggle_input" id="toggle_harmovis" checked="checked" />
@@ -52,12 +53,13 @@
 			<button id="centrair" class="btn-square-little-rich">Centrair</button>
 			<label class="toggle_label">
 				<span class="toggle_in">
-					<input type="checkbox" class="toggle_input" id="toggle_proxy"  />
+					<input type="checkbox" class="toggle_input" id="toggle_proxy" checked="checked" />
 				<span class="toggle_content"></span>
 				<span class="toggle_circle"></span>
 			</span>
 			Proxy
 			</label>
+<!--  // not working..
 			<label class="toggle_label">
 				<span class="toggle_in">
 					<input type="checkbox" class="toggle_input" id="toggle_save_message"  />
@@ -67,9 +69,25 @@
 			SaveMessages
 			</label>
 			<button id="playMessage" class="btn-square-little-rich">PlayMessages</button>
+-->
 		</div>
 		<div class="terminaljs" id="miscterm"></div>
 		<footer></footer>
+		<div>
+			<dialog id="input-mapbox-token">
+				<h4 class="modal-header"> Input MAPBOX_ACCESS_TOKEN </h4>
+				<form method = "dialog">
+				<div class="modal-body">
+					Please input your mapbox access token (obtain from Mapbox.com ).<br />
+					<input type="text" id="input" placeholder="Input Mapbox Access Token" size=90/><br>
+				</div>
+					<footer class="modal-footer">
+						<button type="submit" value="cancel"> Cancel </button>
+						<button type="submit" value="ok"> Ok </buttion>
+					</footer>
+				</form>
+			</dialog>
+		</div>
 	</div>
 </body>
 
