@@ -605,7 +605,9 @@ function doServers(){
 //	)
 	mainWindow = await createMainWindow();
 	menuConfig.set_mainwindow(mainWindow);
-
+	if (!config.has("MAPBOX_ACCESS_TOKEN")){
+		config.set("MAPBOX_ACCESS_TOKEN", 'please set mapbox_access_token here')
+	}
 	mainWindow.webContents.send('started', '')
 
 	const token = config.get("MAPBOX_ACCESS_TOKEN")

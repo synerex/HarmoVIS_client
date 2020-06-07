@@ -40,22 +40,22 @@
 		"electron-context-menu": "^2.0.1",
 		"electron-debug": "^3.1.0",
 		"electron-preferences": "^2.0.0",
-		"electron-store": "^5.1.1",
+		"electron-store": "^5.2.0",
 		"electron-unhandled": "^3.0.2",
 		"electron-updater": "^4.3.1",
 		"electron-util": "^0.14.1",
 		"electron-window-state": "^5.0.3",
-		"fs-extra": "^9.0.0",
+		"fs-extra": "^9.0.1",
 		"terminal.js": "^1.0.10",
 		"tree-kill": "^1.2.2"
 	},
 	"devDependencies": {
-		"electron": "^9.0.0",
+		"electron": "^9.0.2",
 		"electron-builder": "^22.7.0",
 		"electron-packager": "^14.2.1",
 		"node-sass": "^4.14.1",
-		"np": "^6.2.3",
-		"xo": "^0.30.0"
+		"np": "^6.2.4",
+		"xo": "^0.32.0"
 	},
 	"xo": {
 		"envs": [
