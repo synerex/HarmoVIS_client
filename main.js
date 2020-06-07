@@ -69,10 +69,10 @@ const createMainWindow = async () => {
 	FS.existsSync(configDir) || FS.mkdirSync(configDir);
 
 	let mainWindowState = WindowStateKeeper({
-		defaultWidth: 400,
-		defaultHeight: 300,
+		defaultWidth: 800,
+		defaultHeight: 900,
 		path: configDir,
-		file: 'config.json'
+		file: 'window-state.json'
 	});
 
 
@@ -552,7 +552,7 @@ ipc.on("mapbox-token", (event, d) => {
 	console.log("Now Get mapbox:",d)
 	config.set('MAPBOX_ACCESS_TOKEN',d);
 	// if first assign, start servers
-	if (d > 80 && nodeServ == null){
+	if (d.length > 80 && nodeServ === null){
 		doServers()
 	}
 });
