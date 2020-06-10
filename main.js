@@ -469,20 +469,31 @@ ipc.on('do-higashiyama', () => {
 	let dirPath = path.join(exePath, '/synerex/')
 	let geoName = path.join(exePath, '/synerex/geo-provider.exe')
 	if (process.platform === 'darwin') {
+//		console.log("darwin;dir",dirPath)
+//		mainWindow.webContents.send("misclog", "DirPath:"+dirPath)
+//		mainWindow.webContents.send("misclog", "exePath:"+exePath)
 		geoName = path.join(exePath, '/../synerex/geo-provider')
+		dirPath = path.join(exePath, '/../synerex/')
+//		FS.readdir(dirPath,(err,files)=>{
+//			mainWindow.webContents.send("misclog", "FILES;"+files)
+//			files.forEach(file =>{
+//				mainWindow.webContents.send("misclog", "Fname:"+file)
+//			})
+//		})
+
 	}
 	
-
-	const c1 = spawn(geoName, ['-geojson', 'higashiyama_facility.geojson', '-webmercator'],{cwd:dirPath})	
-	setCallBack(c1, 'geoh1', 'misclog')
-	sleep(1000).then(() => {
-		const c2 = spawn(geoName, ['-lines', 'higashiyama_line.geojson', '-webmercator'],{cwd:dirPath})
-		setCallBack(c2, 'geoh2', 'misclog')
-		sleep(500).then(()=>{
-			const c3 = spawn(geoName, ['-viewState', '35.15596582695651,136.9783370942177,16'],{cwd:dirPath})
-			setCallBack(c3, 'geoh3', 'misclog')
+		const c1 = spawn(geoName, ['-geojson', 'higashiyama_facility.geojson', '-webmercator'],{cwd:dirPath})	
+		setCallBack(c1, 'geoh1', 'misclog')
+		sleep(1000).then(() => {
+			const c2 = spawn(geoName, ['-lines', 'higashiyama_line.geojson', '-webmercator'],{cwd:dirPath})
+			setCallBack(c2, 'geoh2', 'misclog')
+			sleep(500).then(()=>{
+				const c3 = spawn(geoName, ['-viewState', '35.15596582695651,136.9783370942177,16'],{cwd:dirPath})
+				setCallBack(c3, 'geoh3', 'misclog')
+			})
 		})
-	})
+	
 
 });
 
@@ -493,6 +504,7 @@ ipc.on('do-centrair', () => {
 	let dirPath = path.join(exePath, '/synerex/')
 	let geoName = path.join(exePath, '/synerex/geo-provider.exe')
 	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/')
 		geoName = path.join(exePath, '/../synerex/geo-provider')
 	}
 	const c2 = spawn(geoName, ['-lines', 'accessPlaza.geojson', '-webmercator'],{cwd:dirPath})
@@ -522,6 +534,8 @@ ipc.on('do-simulation', () => {
 	let rtName = path.join(exePath, '/synerex/channel_retrieve.exe')
 	if (process.platform === 'darwin') {
 		rtName = path.join(exePath, '/../synerex/channel_retrieve')
+		dirPath = path.join(exePath, '/../synerex/')
+
 	}
 	playProc = spawn(rtName, ['-sendfile', 'higashi-sim.csv', '-channel','13','-speed','1.2'],{cwd:dirPath})
 	setCallBack(playProc, 'pm', 'misclog')
