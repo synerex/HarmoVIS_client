@@ -542,6 +542,29 @@ ipc.on('do-simulation', () => {
 	
 });
 
+ipc.on('do-covid19', () => {
+	console.log("Start Hiigashiyama Simulation");
+	if (playProc != null) {
+		var r = kill(playProc.pid, 'SIGKILL', function (err) {
+			console.log("PlayProc kill err", err)
+		})
+		playProc = null
+	}
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let rtName = path.join(exePath, '/synerex/channel_retrieve.exe')
+	if (process.platform === 'darwin') {
+		rtName = path.join(exePath, '/../synerex/channel_retrieve')
+		dirPath = path.join(exePath, '/../synerex/')
+
+	}
+	playProc = spawn(rtName, ['-sendfile', 'aichi-covid-19.csv', '-channel','14','-speed','1.2'],{cwd:dirPath})
+	setCallBack(playProc, 'pm', 'misclog')
+	
+});
+
+
+
 ipc.on('do-playMessage', () => {
 	console.log("Start Play Messages");
 	if (playProc != null) {

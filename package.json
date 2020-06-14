@@ -1,6 +1,6 @@
 {
 	"name": "HarmoVIS_client",
-	"version": "0.4.2",
+	"version": "0.4.3",
 	"description": "Harmoware-VIS Client App for Synerex using Electron",
 	"main": "main.js",
 	"repository": {

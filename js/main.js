@@ -125,6 +125,11 @@ ipc.on('started', function(){
         ipc.send('do-simulation','')
     }
 
+    document.getElementById('covid19').onclick = function() {
+        ipc.send('do-covid19','')
+    }
+
+
 
 })
 
