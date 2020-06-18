@@ -56,6 +56,8 @@ let mainWindow;
 
 let harmovisWindow;
 
+let controlVisible = true;
+
 function sleep(time) {
 	return new Promise((resolve, reject) => {
 		setTimeout(() => {
@@ -522,7 +524,7 @@ ipc.on('do-centrair', () => {
 
 
 ipc.on('do-simulation', () => {
-	console.log("Start Hiigashiyama Simulation");
+	console.log("Start Higashiyama Simulation");
 	if (playProc != null) {
 		var r = kill(playProc.pid, 'SIGKILL', function (err) {
 			console.log("PlayProc kill err", err)
@@ -543,7 +545,7 @@ ipc.on('do-simulation', () => {
 });
 
 ipc.on('do-covid19', () => {
-	console.log("Start Hiigashiyama Simulation");
+	console.log("Start Aichi-Covid19 visualization");
 	if (playProc != null) {
 		var r = kill(playProc.pid, 'SIGKILL', function (err) {
 			console.log("PlayProc kill err", err)
@@ -561,6 +563,25 @@ ipc.on('do-covid19', () => {
 	playProc = spawn(rtName, ['-sendfile', 'aichi-covid-19.csv', '-channel','14','-speed','1.2'],{cwd:dirPath})
 	setCallBack(playProc, 'pm', 'misclog')
 	
+});
+
+ipc.on('do-tgcontrol', () => {
+	console.log("Toggle control visibile");
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let geoName = path.join(exePath, '/synerex/geo-provider.exe')
+	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/')
+		geoName = path.join(exePath, '/../synerex/geo-provider')
+	}
+	if (controlVisible){
+		playProc = spawn(geoName, ['-harmovis', '{"controlVisible":false}'],{cwd:dirPath})
+		controlVisible = false;
+	}else{
+		playProc = spawn(geoName, ['-harmovis', '{"controlVisible":true}'],{cwd:dirPath})
+		controlVisible = true;
+	}
+	setCallBack(playProc, 'pm', 'misclog')	
 });
 
 
