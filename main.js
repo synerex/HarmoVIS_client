@@ -565,6 +565,30 @@ ipc.on('do-covid19', () => {
 	
 });
 
+
+ipc.on('do-meshdemo', () => {
+	console.log("Start Mesh-Demo visualization");
+	if (playProc != null) {
+		var r = kill(playProc.pid, 'SIGKILL', function (err) {
+			console.log("PlayProc kill err", err)
+		})
+		playProc = null
+	}
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let rtName = path.join(exePath, '/synerex/channel_retrieve.exe')
+	if (process.platform === 'darwin') {
+		rtName = path.join(exePath, '/../synerex/channel_retrieve')
+		dirPath = path.join(exePath, '/../synerex/')
+
+	}
+	playProc = spawn(rtName, ['-sendfile', 'meshDemo.csv', '-channel','14','-speed','-450'],{cwd:dirPath})
+	setCallBack(playProc, 'pm', 'misclog')
+	
+});
+
+
+
 ipc.on('do-tgcontrol', () => {
 	console.log("Toggle control visibile");
 	let exePath = path.dirname(app.getPath('exe'))
@@ -575,10 +599,10 @@ ipc.on('do-tgcontrol', () => {
 		geoName = path.join(exePath, '/../synerex/geo-provider')
 	}
 	if (controlVisible){
-		playProc = spawn(geoName, ['-harmovis', '{"controlVisible":false}'],{cwd:dirPath})
+		playProc = spawn(geoName, ['-harmovis', '{\"controlVisible\":false}'],{cwd:dirPath})
 		controlVisible = false;
 	}else{
-		playProc = spawn(geoName, ['-harmovis', '{"controlVisible":true}'],{cwd:dirPath})
+		playProc = spawn(geoName, ['-harmovis', '{\"controlVisible\":true}'],{cwd:dirPath})
 		controlVisible = true;
 	}
 	setCallBack(playProc, 'pm', 'misclog')	

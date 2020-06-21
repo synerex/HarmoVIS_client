@@ -129,6 +129,10 @@ ipc.on('started', function(){
         ipc.send('do-covid19','')
     }
 
+    document.getElementById('meshdemo').onclick = function() {
+        ipc.send('do-meshdemo','')
+    }
+
     document.getElementById('tgcontrol').onclick = function() {
         ipc.send('do-tgcontrol','')
     }
