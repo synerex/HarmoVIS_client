@@ -11,6 +11,15 @@ Just install them. Then you need to obtain Mapbox access token.
 Now, you can enjoy HarmoVIS_client.
 
 
+
+Pushing "MapWin" button displays Map window.
+
+Several buttons below are DEMO button.
+
+![HarmowareVIS](HarmowareVIS.png)
+
+
+
 ## インストール：
 日本語ドキュメントは以下にあります。（ちょっと古い）
 
