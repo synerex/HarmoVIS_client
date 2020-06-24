@@ -1,6 +1,6 @@
 {
 	"name": "HarmoVIS_client",
-	"version": "0.4.5",
+	"version": "0.4.6",
 	"description": "Harmoware-VIS Client App for Synerex using Electron",
 	"main": "main.js",
 	"repository": {
@@ -50,7 +50,7 @@
 		"tree-kill": "^1.2.2"
 	},
 	"devDependencies": {
-		"electron": "^9.0.2",
+		"electron": "^9.0.5",
 		"electron-builder": "^22.7.0",
 		"electron-packager": "^14.2.1",
 		"node-sass": "^4.14.1",
