@@ -1,8 +1,14 @@
 # HarmoVIS_client
 Harmoware-VIS client for Synerex using Electron
+![HarmoVIS_layers](HarmoVIS_layers.png)
 
 # Installation
 
+You can download installers from https://github.com/synerex/HarmoVIS_client/releases
+
+Just install them. Then you need to obtain Mapbox access token.
+
+Now, you can enjoy HarmoVIS_client.
 
 
 ## インストール：
