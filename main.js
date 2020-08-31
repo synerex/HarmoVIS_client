@@ -253,9 +253,9 @@ const runSynerexServ = () => {
 const runHarmoVIS = () => {
 //	const sxdir = config.get('SynerexDir');
 	let exePath = path.dirname(app.getPath('exe'))
-	let hvName = path.join(exePath, '/synerex/harmovis-layers.exe')
+	let hvName = path.join(exePath, '/synerex/harmovis-objmap.exe')
 	if (process.platform === 'darwin') {
-		hvName = path.join(exePath, '/../synerex/harmovis-layers')
+		hvName = path.join(exePath, '/../synerex/harmovis-objmap')
 	}
 
 	const mapbox_token = config.get('MAPBOX_ACCESS_TOKEN');
@@ -644,6 +644,25 @@ const runWES = () => {
 		}
 }
 
+const stopWES = () => {
+	if (wesServ != null) {
+		var r = kill(wesServ.pid, 'SIGKILL', function (err) {
+			console.log("Kill err", err)
+		})
+		console.log("Kill Result", r)
+	}
+}
+
+const stopHSIM = () => {
+	if (hsimServ != null) {
+		var r = kill(hsimServ.pid, 'SIGKILL', function (err) {
+			console.log("Kill err", err)
+		})
+		console.log("Kill Result", r)
+	}
+}
+
+
 const runHSIM = () => {
 		let exePath = path.dirname(app.getPath('exe'))
 		let dirPath = path.join(exePath, '/synerex/')
@@ -673,7 +692,8 @@ const runHSIM = () => {
 			})
 		}
 }
-	
+
+
 
 ipc.on('do-set_state', () => {
 	console.log("Set CLI set_state");
@@ -691,10 +711,64 @@ ipc.on('do-set_state', () => {
 		playProc = spawn(geoName, ['-setState', 'setState_wms.txt'],{cwd:dirPath})
 		setCallBack(playProc, 'pm', 'misclog')	
 	})
+});
+ipc.on('do-set_state2', () => {
+	console.log("Set CLI set_state2");
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let geoName = path.join(exePath, '/synerex/cli.exe')
+	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/')
+		geoName = path.join(exePath, '/../synerex/cli')
+	}
+	runHSIM()
+	runWES()
+
+	sleep(1000).then(() => {
+		playProc = spawn(geoName, ['-setState', 'setState_wms2.txt'],{cwd:dirPath})
+		setCallBack(playProc, 'pm', 'misclog')	
+	})
+});
+
+ipc.on('do-set_state3', () => {
+	console.log("Set CLI set_state3");
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let geoName = path.join(exePath, '/synerex/cli.exe')
+	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/')
+		geoName = path.join(exePath, '/../synerex/cli')
+	}
+	runHSIM()
+	runWES()
+
+	sleep(1000).then(() => {
+		playProc = spawn(geoName, ['-setState', 'setState_wms3.txt'],{cwd:dirPath})
+		setCallBack(playProc, 'pm', 'misclog')	
+	})
+});
 
 
+
+ipc.on('do-clear_state', () => {
+	console.log("Stop WES/HSIM and clear_state");
+	stopHSIM()
+	stopWES()
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let geoName = path.join(exePath, '/synerex/cli.exe')
+	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/')
+		geoName = path.join(exePath, '/../synerex/cli')
+	}
+
+	sleep(1000).then(() => {
+		playProc = spawn(geoName, ['-setState', 'clearState_wms.txt'],{cwd:dirPath})
+		setCallBack(playProc, 'pm', 'misclog')	
+	})
 	
 });
+
 
 ipc.on('do-run_sim', () => {
 	console.log("Set CLI run_sim");
@@ -707,6 +781,21 @@ ipc.on('do-run_sim', () => {
 	}
 
 	playProc = spawn(geoName, ['-wmsCsv', 'wms_order.csv'],{cwd:dirPath})
+	setCallBack(playProc, 'pm', 'misclog')		
+});
+
+
+ipc.on('do-run_sim2', () => {
+	console.log("Set CLI run_sim2");
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let geoName = path.join(exePath, '/synerex/cli.exe')
+	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/')
+		geoName = path.join(exePath, '/../synerex/cli')
+	}
+
+	playProc = spawn(geoName, ['-wmsCsv', 'wms_order2.csv'],{cwd:dirPath})
 	setCallBack(playProc, 'pm', 'misclog')		
 });
 
