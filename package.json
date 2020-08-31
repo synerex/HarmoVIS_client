@@ -1,7 +1,7 @@
 {
-	"name": "HarmoVIS_client",
-	"version": "0.4.7",
-	"description": "Harmoware-VIS Client App for Synerex using Electron",
+	"name": "HarmoWES_client",
+	"version": "0.5.1",
+	"description": "HarmoWES Client App",
 	"main": "main.js",
 	"repository": {
 		"type": "git",
@@ -68,7 +68,7 @@
 		"releaseDraft": false
 	},
 	"build": {
-		"appId": "net.synerex.HarmoVIS_client",
+		"appId": "net.synerex.HarmoWES_client",
 		"mac": {
 			"category": "public.app-category.utilities",
 			"darkModeSupport": true

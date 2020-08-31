@@ -110,6 +110,7 @@ ipc.on('started', function(){
         ipc.send('start-browser','')
     }
 
+    /*
     document.getElementById('higashiyama').onclick = function() {
         // start NoderServer
         ipc.send('do-higashiyama','')
@@ -132,12 +133,28 @@ ipc.on('started', function(){
     document.getElementById('meshdemo').onclick = function() {
         ipc.send('do-meshdemo','')
     }
+    */
 
     document.getElementById('tgcontrol').onclick = function() {
         ipc.send('do-tgcontrol','')
     }
 
+    document.getElementById('set_state').onclick = function() {
+        miscTerm.write("setState")
+        ipc.send('do-set_state','')
+    }
 
+    document.getElementById('run_sim').onclick = function() {
+        ipc.send('do-run_sim','')
+    }
+
+    document.getElementById('speed_up').onclick = function() {
+        ipc.send('do-speed_up','')
+    }
+
+    document.getElementById('speed_down').onclick = function() {
+        ipc.send('do-speed_down','')
+    }
 
 })
 

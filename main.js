@@ -38,7 +38,7 @@ preferences.on('save', (preferences) => {
 */
 
 // Note: Must match `build.appId` in package.json
-app.setAppUserModelId('net.synerex.HarmoVIS_client');
+app.setAppUserModelId('net.synerex.HarmoWES_client');
 
 // Uncomment this before publishing your first version.
 // It's commented out as it throws an error if there are no published versions.
@@ -67,7 +67,7 @@ function sleep(time) {
 }
 
 const createMainWindow = async () => {
-	let configDir = path.join(app.getPath('appData'), 'HarmoVIS_client');
+	let configDir = path.join(app.getPath('appData'), 'HarmoWES_client');
 	FS.existsSync(configDir) || FS.mkdirSync(configDir);
 
 	let mainWindowState = WindowStateKeeper({
@@ -79,7 +79,7 @@ const createMainWindow = async () => {
 
 
 	let options = {
-		title: "Synerex+HarmoVIS("+packageJson.version+")",
+		title: "Synerex+HarmoWES("+packageJson.version+")",
 		x: mainWindowState.x,
 		y: mainWindowState.y,
 		width: mainWindowState.width,
@@ -124,6 +124,10 @@ let harmoVIS = null
 let prServ = null // for ProxyServer
 let storeProc = null // channel_store
 let playProc = null // channel_retrieve
+
+let wesServ = null
+let hsimServ = null
+let simSpeed = 1
 
 const setNodeCallBack = (proc) => {
 	proc.stdout.on('data', (data) => {
@@ -610,6 +614,134 @@ ipc.on('do-tgcontrol', () => {
 
 
 
+const runWES = () => {
+		let exePath = path.dirname(app.getPath('exe'))
+		let dirPath = path.join(exePath, '/synerex/')
+		let sxName = path.join(exePath, '/synerex/wes.exe')
+		if (process.platform === 'darwin') {
+			dirPath = path.join(exePath, '/../synerex/')
+			sxName = path.join(exePath, '/../synerex/wes')
+		}
+	
+		if (wesServ === null) {
+			try {
+				FS.statSync(sxName);
+				wesServ = spawn(sxName,['-locmap','location_list.csv'],{cwd:dirPath})
+				setCallBack(wesServ, 'pm', 'misclog')
+			} catch (err) {
+				mainWindow.webContents.send('misclog', '')
+				mainWindow.webContents.send('misclog', 'Cant open ' + sxName)
+			}
+		} else {
+			var r = kill(wesServ.pid, 'SIGKILL', function (err) {
+				console.log("Kill err", err)
+			})
+			console.log("Kill Result", r)
+			sleep(2000).then(() => {
+				wesServ = spawn(sxName,['-locmap','location_list.csv'],{cwd:dirPath})
+				setCallBack(wesServ, 'pm', 'misclog')
+			})
+		}
+}
+
+const runHSIM = () => {
+		let exePath = path.dirname(app.getPath('exe'))
+		let dirPath = path.join(exePath, '/synerex/')
+		let sxName = path.join(exePath, '/synerex/hsim.exe')
+		if (process.platform === 'darwin') {
+			dirPath = path.join(exePath, '/../synerex/')
+			sxName = path.join(exePath, '/../synerex/hsim')
+		}
+	
+		if (hsimServ === null) {
+			try {
+				FS.statSync(sxName);
+				hsimServ = spawn(sxName,['-locmap','location_list.csv'],{cwd:dirPath})
+				setCallBack(hsimServ, 'pm', 'misclog')
+			} catch (err) {
+				mainWindow.webContents.send('misclog', '')
+				mainWindow.webContents.send('misclog', 'Cant open ' + sxName)
+			}
+		} else {
+			var r = kill(hsimServ.pid, 'SIGKILL', function (err) {
+				console.log("Kill err", err)
+			})
+			console.log("Kill Result", r)
+			sleep(2000).then(() => {
+				hsimServ = spawn(sxName,['-locmap','location_list.csv'],{cwd:dirPath})
+				setCallBack(hsimServ, 'pm', 'misclog')
+			})
+		}
+}
+	
+
+ipc.on('do-set_state', () => {
+	console.log("Set CLI set_state");
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let geoName = path.join(exePath, '/synerex/cli.exe')
+	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/')
+		geoName = path.join(exePath, '/../synerex/cli')
+	}
+	runHSIM()
+	runWES()
+
+	sleep(1000).then(() => {
+		playProc = spawn(geoName, ['-setState', 'setState_wms.txt'],{cwd:dirPath})
+		setCallBack(playProc, 'pm', 'misclog')	
+	})
+
+
+	
+});
+
+ipc.on('do-run_sim', () => {
+	console.log("Set CLI run_sim");
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let geoName = path.join(exePath, '/synerex/cli.exe')
+	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/')
+		geoName = path.join(exePath, '/../synerex/cli')
+	}
+
+	playProc = spawn(geoName, ['-wmsCsv', 'wms_order.csv'],{cwd:dirPath})
+	setCallBack(playProc, 'pm', 'misclog')		
+});
+
+ipc.on('do-speed_up', () => {
+	console.log("Set CLI speed_up");
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let geoName = path.join(exePath, '/synerex/cli.exe')
+	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/')
+		geoName = path.join(exePath, '/../synerex/cli')
+	}
+	simSpeed = simSpeed + 2
+	playProc = spawn(geoName, ['-speed', String(simSpeed)])
+	setCallBack(playProc, 'pm', 'misclog')		
+});
+
+ipc.on('do-speed_down', () => {
+	console.log("Set CLI ssliw");
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let cliName = path.join(exePath, '/synerex/cli.exe')
+	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/')
+		cliName = path.join(exePath, '/../synerex/cli')
+	}
+	simSpeed = simSpeed - 2
+	if (simSpeed == 0) simSpeed = 1;
+	playProc = spawn(cliName, ['-speed', String(simSpeed)])
+	setCallBack(playProc, 'pm', 'misclog')		
+});
+
+
+
+
 ipc.on('do-playMessage', () => {
 	console.log("Start Play Messages");
 	if (playProc != null) {
@@ -675,7 +807,7 @@ const doServers = () => {
 	sleep(1000).then(() => {
 			runSynerexServ()
 			sleep(1000).then(() => {
-				runHarmoVIS()
+//				runHarmoVIS()
 				sleep(500).then(() => {
 					runProxy()
 				})
@@ -700,10 +832,10 @@ const doServers = () => {
 
 	const token = config.get("MAPBOX_ACCESS_TOKEN")
 	mainWindow.webContents.send("set-mapbox-token", token)
-	if (token.length < 80 ){ // token is not set!
-		mainWindow.webContents.send("mapbox-dialog","")
-	}else{//
+//	if (token.length < 80 ){ // token is not set!
+//		mainWindow.webContents.send("mapbox-dialog","")
+//	}else{//
 		doServers();
-	}
+//	}
 
 })();
