@@ -129,6 +129,9 @@ let wesServ = null
 let hsimServ = null
 let simSpeed = 1
 
+let unityApp = null // for unity trusco_field
+let statePub = null  // for state publisher
+
 const setNodeCallBack = (proc) => {
 	proc.stdout.on('data', (data) => {
 //		console.log('stdout:' + data)
@@ -433,10 +436,21 @@ ipc.on('start-prserv', () => {
 	runProxy()
 });
 
+ipc.on('start-unity', () => {
+	console.log("Start Unity");
+	runUnity()
+});
+ipc.on('stop-unity', () => {
+	console.log("Stop Unity");
+	stopUnity()
+});
+
+
+
 ipc.on('start-browser', () => {
 	console.log("Start Win from Browser");
 	let options = {
-		title: "Harmoware-VIS",
+		title: "Harmoware-WES",
 		x: 10,
 		y: 10,
 		width: 1024,
@@ -637,7 +651,7 @@ const runWES = () => {
 				console.log("Kill err", err)
 			})
 			console.log("Kill Result", r)
-			sleep(2000).then(() => {
+			sleep(1000).then(() => {
 				wesServ = spawn(sxName,['-locmap','location_list.csv'],{cwd:dirPath})
 				setCallBack(wesServ, 'pm', 'misclog')
 			})
@@ -650,6 +664,79 @@ const stopWES = () => {
 			console.log("Kill err", err)
 		})
 		console.log("Kill Result", r)
+	}
+}
+
+
+
+const runUnity = () => {
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/unity/')
+	let sxName = path.join(exePath, '/synerex/unity/Trusco_Field.exe')
+	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/unity')
+		sxName = path.join(exePath, '/../synerex/unity/Trusco_Field')
+	}
+
+	if (unityApp === null) {
+		try {
+			FS.statSync(sxName);
+			unityApp = spawn(sxName,[],{cwd:dirPath})
+		} catch (err) {
+			mainWindow.webContents.send('misclog', 'Cant open ' + sxName)
+		}
+	} else {
+		stopUnity()
+		sleep(1000).then(() => {
+			unityApp = spawn(sxName,[],{cwd:dirPath})
+		})
+	}
+}
+
+const stopUnity = () => {
+	if (unityApp != null) {
+		var r = kill(unityApp.pid, 'SIGKILL', function (err) {
+			console.log("Kill Unity err", err)
+			})
+		console.log("Kill Unity Result", r)
+		unityApp = null
+	}
+}
+
+
+
+const runStatePub = () => {
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let sxName = path.join(exePath, '/synerex/state-publish.exe')
+	if (process.platform === 'darwin') {
+		dirPath = path.join(exePath, '/../synerex/')
+		sxName = path.join(exePath, '/../synerex/state-publish')
+	}
+
+	if (statePub === null) {
+		try {
+			FS.statSync(sxName);
+			statePub = spawn(sxName,[],{cwd:dirPath})
+			setCallBack(statePub, 'pm', 'misclog')
+		} catch (err) {
+			mainWindow.webContents.send('misclog', 'Cant open ' + sxName)
+		}
+	} else {
+		stopStatePub()
+		sleep(1000).then(
+			runStatePub()
+		)
+	}
+}
+
+const stopStatePub = () => {
+	if (statePub != null) {
+		var r = kill(statePub.pid, 'SIGKILL', function (err) {
+			console.log("Kill Unity err", err)
+			})
+		console.log("Kill Unity Result", r)
+		statePub = null
 	}
 }
 
@@ -706,8 +793,9 @@ ipc.on('do-set_state', () => {
 	}
 	runHSIM()
 	runWES()
+	runStatePub()
 
-	sleep(1000).then(() => {
+	sleep(1500).then(() => {
 		playProc = spawn(geoName, ['-setState', 'setState_wms.txt'],{cwd:dirPath})
 		setCallBack(playProc, 'pm', 'misclog')	
 	})
@@ -723,8 +811,9 @@ ipc.on('do-set_state2', () => {
 	}
 	runHSIM()
 	runWES()
+	runStatePub()
 
-	sleep(1000).then(() => {
+	sleep(1500).then(() => {
 		playProc = spawn(geoName, ['-setState', 'setState_wms2.txt'],{cwd:dirPath})
 		setCallBack(playProc, 'pm', 'misclog')	
 	})
@@ -741,6 +830,7 @@ ipc.on('do-set_state3', () => {
 	}
 	runHSIM()
 	runWES()
+	runStatePub()
 
 	sleep(1000).then(() => {
 		playProc = spawn(geoName, ['-setState', 'setState_wms3.txt'],{cwd:dirPath})
@@ -754,6 +844,7 @@ ipc.on('do-clear_state', () => {
 	console.log("Stop WES/HSIM and clear_state");
 	stopHSIM()
 	stopWES()
+	stopStatePub()
 	let exePath = path.dirname(app.getPath('exe'))
 	let dirPath = path.join(exePath, '/synerex/')
 	let geoName = path.join(exePath, '/synerex/cli.exe')
@@ -780,12 +871,32 @@ ipc.on('do-run_sim', () => {
 		geoName = path.join(exePath, '/../synerex/cli')
 	}
 
-	playProc = spawn(geoName, ['-wmsCsv', 'wms_order.csv'],{cwd:dirPath})
+	playProc = spawn(geoName, ['-wmsCsv', 'wms_order_new.csv'],{cwd:dirPath})
 	setCallBack(playProc, 'pm', 'misclog')		
 });
 
 
-ipc.on('do-run_sim2', () => {
+ipc.on('do-speedsim', () => {
+	console.log("do speedsim");
+	if (playProc != null) {
+		var r = kill(playProc.pid, 'SIGKILL', function (err) {
+			console.log("PlayProc kill err", err)
+		})
+		playProc = null
+	}
+	let exePath = path.dirname(app.getPath('exe'))
+	let dirPath = path.join(exePath, '/synerex/')
+	let rtName = path.join(exePath, '/synerex/channel_retrieve.exe')
+	if (process.platform === 'darwin') {
+		rtName = path.join(exePath, '/../synerex/channel_retrieve')
+	}
+	playProc = spawn(rtName, ['-sendfile', '2020-09-14.csv', '-channel','16,17','-speed','-10'],{cwd:dirPath})
+	setCallBack(playProc, 'pm', 'misclog')
+	
+});
+
+
+ipc.on('do-run_async', () => {
 	console.log("Set CLI run_sim2");
 	let exePath = path.dirname(app.getPath('exe'))
 	let dirPath = path.join(exePath, '/synerex/')
@@ -798,6 +909,7 @@ ipc.on('do-run_sim2', () => {
 	playProc = spawn(geoName, ['-wmsCsv', 'wms_order2.csv'],{cwd:dirPath})
 	setCallBack(playProc, 'pm', 'misclog')		
 });
+
 
 ipc.on('do-speed_up', () => {
 	console.log("Set CLI speed_up");
@@ -896,9 +1008,12 @@ const doServers = () => {
 	sleep(1000).then(() => {
 			runSynerexServ()
 			sleep(1000).then(() => {
-//				runHarmoVIS()
+				runHarmoVIS()
 				sleep(500).then(() => {
 					runProxy()
+					sleep(500).then(() => {
+						runUnity()
+					})
 				})
 		})
 	})

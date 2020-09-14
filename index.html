@@ -21,6 +21,17 @@
 			</span>
 			HarmoVIS_Objmap
 			</label>
+
+			<label class="toggle_label">
+				<span class="toggle_in">
+				<input type="checkbox" class="toggle_input" id="toggle_unity" checked="checked" />
+				<span class="toggle_content"></span>
+				<span class="toggle_circle"></span>
+			</span>
+			Trusco_Sim
+			</label>
+
+
 		</div>
 		<div class="terminaljs" id="hvterm"></div>
 
@@ -48,15 +59,17 @@
 		</div>
 		<div class="terminaljs" id="sxterm"></div>
 		<div class="toggle">
-			<button id="set_state" class="btn-square-little-rich">Init_state7-2</button>
-			<button id="run_sim" class="btn-square-little-rich">Start_sim</button>
-			<button id="clear_state" class="btn-square-little-rich">Clear_state</button>
-			<button id="set_state2" class="btn-square-little-rich">State2-2</button>
-			<button id="set_state3" class="btn-square-little-rich">State3-2</button>
+			<button id="set_state" class="btn-square-little-rich">初期化</button>
+			<button id="run_sim" class="btn-square-little-rich">シミュレーション開始</button>
+			<button id="clear_state" class="btn-square-little-rich">状態消去</button>
+<!--			<button id="set_state2" class="btn-square-little-rich">初期化(3-2)</button> -->
+<!--			<button id="set_state3" class="btn-square-little-rich">State3-2</button>-->
+<!--			<button id="run_sim2" class="btn-square-little-rich">Start_sim2</button>-->
 			<button id="speed_up" class="btn-square-little-rich">Speed_up</button>
 			<button id="speed_down" class="btn-square-little-rich">Speed_down</button>
 <!--			<button id="stop_sim" class="btn-square-little-rich">stop_sim</button> -->
-			<button id="tgcontrol" class="btn-square-little-rich">Ctrl</button>
+			<button id="speedsim" class="btn-square-little-rich">記録再生</button>
+			<button id="tgcontrol" class="btn-square-little-rich">ToggleCtrl</button>
 			<label class="toggle_label">
 				<span class="toggle_in">
 					<input type="checkbox" class="toggle_input" id="toggle_proxy" checked="checked" />

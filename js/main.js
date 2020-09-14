@@ -90,6 +90,13 @@ ipc.on('started', function(){
             ipc.send('stop-prserv','')
         }
     }
+    document.getElementById('toggle_unity').onclick = function(e){
+        if (e.currentTarget.checked == true){
+            ipc.send('start-unity','')
+        }else{
+            ipc.send('stop-unity','')
+        }
+    }
 /*
     document.getElementById('toggle_save_message').onclick = function(e) {
         if (e.currentTarget.checked == true){
@@ -134,6 +141,9 @@ ipc.on('started', function(){
         ipc.send('do-meshdemo','')
     }
     */
+   document.getElementById('speedsim').onclick = function() {
+    ipc.send('do-speedsim','')
+    }
 
     document.getElementById('tgcontrol').onclick = function() {
         ipc.send('do-tgcontrol','')
@@ -143,23 +153,30 @@ ipc.on('started', function(){
         miscTerm.write("setState")
         ipc.send('do-set_state','')
     }
+    /*
     document.getElementById('set_state2').onclick = function() {
         ipc.send('do-set_state2','')
     }
-    document.getElementById('set_state3').onclick = function() {
-        ipc.send('do-set_state3','')
-    }
+    */
+//    document.getElementById('set_state3').onclick = function() {
+//        ipc.send('do-set_state3','')
+//    }
+//    document.getElementById('speed_sim').onclick = function() {
+//        ipc.send('do-speedsim','')
+//    }
 
     document.getElementById('run_sim').onclick = function() {
         ipc.send('do-run_sim','')
     }
 
-    document.getElementById('run_sim2').onclick = function() {
-        ipc.send('do-run_sim2','')
-    }
+//    document.getElementById('run_sim2').onclick = function() {
+//        ipc.send('do-run_sim2','')
+//    }
     document.getElementById('clear_state').onclick = function() {
         ipc.send('do-clear_state','')
     }
+
+
     document.getElementById('speed_up').onclick = function() {
         ipc.send('do-speed_up','')
     }
