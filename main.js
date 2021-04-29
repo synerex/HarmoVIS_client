@@ -88,7 +88,10 @@ const createMainWindow = async () => {
 		minHeight: 300,
 		//		icon: Path.join(__dirname, 'appicon.png'),
 		webPreferences: {
-			nodeIntegration: true
+			nodeIntegration: true,
+			nodeIntegrationInWorker: true,
+			nodeIntegrationInSubFrames: true,
+			contextIsolation: false
 		},
 		show: false
 	};
