@@ -35,7 +35,8 @@ You have to copy your own synerex-server, harmovis-layers, nodeserv,  into syner
 
 
 ## 配布パッケージの作成法 (主に windows)
-まず、以下のように各リポジトリのディレクトリを作成します。
+まず、以下のように各リポジトリのディレクトリを作成し、ビルドします。
+synerex_betaについては、submoduleがあるのでそれぞれ必要なバイナリをビルドしてください。
 ```
   /synerex_beta  ( https://github.com/synerex/synerex_beta )
   /synerex/provider_harmovis_layers  ( https://github.com/synerex/provider_harmovis_layers ) 
